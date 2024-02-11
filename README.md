@@ -1,8 +1,8 @@
-# Fabric Example Mod
+# Render Item On Chest
 
-## Setup
+This mod renders the most common item in the chest above the block.
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+Requested by @maximeware
 
 ## License
 
