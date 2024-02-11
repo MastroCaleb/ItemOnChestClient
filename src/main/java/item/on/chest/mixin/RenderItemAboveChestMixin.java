@@ -74,24 +74,42 @@ public class RenderItemAboveChestMixin<T extends BlockEntity> {
 		Direction facing = block.getFacing(state);
 
 		double yPos = activeItem.getItem() instanceof BlockItem ? 0.9 : 1.1;
+
+		boolean blockAbove = !world.getBlockState(chestBlockEntity.getPos().up()).isAir();
+
+		yPos = blockAbove ? yPos-0.8 : yPos;
+
+		double offset = blockAbove ? -0.8 : 0;
+
 		float size = activeItem.getItem() instanceof BlockItem ? 1.5f : 1.25f;
 
 		if(block.getDoubleBlockType(state) == DoubleBlockProperties.Type.FIRST){
 			if(facing == Direction.EAST){
-				matrices.translate(translate.x() + 1, translate.y() + yPos, translate.z() + 0.5);
+				matrices.translate(translate.x() + 1, translate.y() + yPos, translate.z() + 0.5 - offset);
 			}
 			else if(facing == Direction.WEST){
-				matrices.translate(translate.x() + 0, translate.y() + yPos, translate.z() + 0.5);
+				matrices.translate(translate.x() + 0, translate.y() + yPos, translate.z() + 0.5 + offset);
 			}
 			else if(facing == Direction.NORTH){
-				matrices.translate(translate.x() + 0.5, translate.y() + yPos, translate.z() + 0);
+				matrices.translate(translate.x() + 0.5 - offset, translate.y() + yPos, translate.z() + 0);
 			}
 			else{
-				matrices.translate(translate.x() + 0.5, translate.y() + yPos, translate.z() + 1);
+				matrices.translate(translate.x() + 0.5 + offset, translate.y() + yPos, translate.z() + 1);
 			}
 		}
 		else{
-			matrices.translate(translate.x() + 0.5, translate.y() + yPos, translate.z() + 0.5);
+			if(facing == Direction.EAST){
+				matrices.translate(translate.x() + 0.5, translate.y() + yPos, translate.z() + 0.5 - offset);
+			}
+			else if(facing == Direction.WEST){
+				matrices.translate(translate.x() + 0.5, translate.y() + yPos, translate.z() + 0.5 + offset);
+			}
+			else if(facing == Direction.NORTH){
+				matrices.translate(translate.x() + 0.5 - offset, translate.y() + yPos, translate.z() + 0.5);
+			}
+			else{
+				matrices.translate(translate.x() + 0.5 + offset, translate.y() + yPos, translate.z() + 0.5);
+			}
 		}
 
 		matrices.scale(size, size, size);
@@ -102,18 +120,6 @@ public class RenderItemAboveChestMixin<T extends BlockEntity> {
 		minecraft.getItemRenderer().renderItem(activeItem, ModelTransformationMode.GROUND, false, matrices, vertexCosnumers, light, overlay, model);
 		matrices.pop();
 		
-	}
-
-	private void translatePosition(DoubleBlockProperties.Type type, MatrixStack matrices, Vector3f translate, double xFirst, double zFirst, double xSecond, double zSecond){
-		if(type == DoubleBlockProperties.Type.SINGLE){
-			matrices.translate(translate.x() + 0.5, translate.y() + 1.1, translate.z() + 0.5);
-		}
-		else if(type == DoubleBlockProperties.Type.FIRST){
-			matrices.translate(translate.x() + xFirst, translate.y() + 1.1, translate.z() + zFirst);
-		}
-		else if(type == DoubleBlockProperties.Type.SECOND){
-			matrices.translate(translate.x() + xSecond, translate.y() + 1.1, translate.z() + zSecond);
-		}
 	}
 
 	private int getAge(){
