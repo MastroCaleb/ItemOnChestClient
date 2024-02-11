@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "itemonchest",
+  "version": "${version}",
+
+  "name": "Item On Chest",
+  "description": "Renders the most common item in the chest above the block.",
+  "authors": [
+    "Caleb"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/itemonchest/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "itemonchest.mixins.json"
+  ]
+}
