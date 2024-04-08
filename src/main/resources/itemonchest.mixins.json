@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "RenderItemAboveChestMixin",
-    "UpdateRenderOnChestScreenMixin"
+    "UpdateRenderOnChestScreenMixin",
+    "ClearSavedChestsOnTitleScreenMixin",
+    "ClearSavedChestOnDestructionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

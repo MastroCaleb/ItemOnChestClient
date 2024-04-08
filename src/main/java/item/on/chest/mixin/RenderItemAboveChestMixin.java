@@ -39,11 +39,14 @@ import item.on.chest.MapUtils;
 @Mixin(ChestBlockEntityRenderer.class)
 public class RenderItemAboveChestMixin<T extends BlockEntity> {
 
+	/*
+	 * Inject the render method of the chest's block entity renderer to render an item.
+	 */
 	@Inject(at = @At("TAIL"), method = "render")
 	private void renderItemAboveChestMixin(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexCosnumers, int light, int overlay, CallbackInfo info) {
 		renderItem(entity, tickDelta, matrices, vertexCosnumers, light, overlay);
 	}
-
+	
 	public void renderItem(T blockEntity, float tickDelta,MatrixStack matrices, VertexConsumerProvider vertexCosnumers, int light, int overlay){
 		World world = blockEntity.getWorld();
 		if(world == null || blockEntity.isRemoved()) return;
@@ -53,8 +56,9 @@ public class RenderItemAboveChestMixin<T extends BlockEntity> {
 
 		ChestBlock block = (ChestBlock)state.getBlock();
 
+		Direction facing = block.getFacing(state);
+
 		DoubleBlockProperties.Type type = block.getDoubleBlockType(state);
-		if(block.getDoubleBlockType(state) == DoubleBlockProperties.Type.SECOND) return;
 
 		ChestBlockEntity chestBlockEntity = (ChestBlockEntity)blockEntity;
 
@@ -70,8 +74,6 @@ public class RenderItemAboveChestMixin<T extends BlockEntity> {
 
 		BakedModel model = minecraft.getItemRenderer().getModel(activeItem, world, null, 0);
 		Vector3f translate = model.getTransformation().ground.translation;
-			
-		Direction facing = block.getFacing(state);
 
 		double yPos = activeItem.getItem() instanceof BlockItem ? 0.9 : 1.1;
 
@@ -83,7 +85,7 @@ public class RenderItemAboveChestMixin<T extends BlockEntity> {
 
 		float size = activeItem.getItem() instanceof BlockItem ? 1.5f : 1.25f;
 
-		if(block.getDoubleBlockType(state) == DoubleBlockProperties.Type.FIRST){
+		if(type == DoubleBlockProperties.Type.FIRST){
 			if(facing == Direction.EAST){
 				matrices.translate(translate.x() + 1, translate.y() + yPos, translate.z() + 0.5 - offset);
 			}
@@ -96,6 +98,12 @@ public class RenderItemAboveChestMixin<T extends BlockEntity> {
 			else{
 				matrices.translate(translate.x() + 0.5 + offset, translate.y() + yPos, translate.z() + 1);
 			}
+		}
+		else if(type == DoubleBlockProperties.Type.SECOND){
+			MapUtils.chests.remove(chestBlockEntity.getPos());
+			BlockPos pos = MapUtils.getFirstChestFromSecondChest(facing, chestBlockEntity.getPos());
+			MapUtils.lastOpened = pos;
+			MapUtils.chests.put(pos, activeItem);
 		}
 		else{
 			if(facing == Direction.EAST){
@@ -119,7 +127,6 @@ public class RenderItemAboveChestMixin<T extends BlockEntity> {
 		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
 		minecraft.getItemRenderer().renderItem(activeItem, ModelTransformationMode.GROUND, false, matrices, vertexCosnumers, light, overlay, model);
 		matrices.pop();
-		
 	}
 
 	private int getAge(){
